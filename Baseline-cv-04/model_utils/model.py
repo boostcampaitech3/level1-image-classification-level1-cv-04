@@ -7,8 +7,11 @@ def load_model(args):
 
     model_type = args['MODEL']
     num_classes = args['NUM_CLASSES']
-
-    if model_type == 'efficientnet_b3':
+    
+    if model_type in dir(timm.models):
+        model = timm.create_model(model_type, pretrained=True, num_classes=num_classes)
+        
+    elif model_type == 'efficientnet_b3':
         model = timm.create_model(model_type, pretrained=True, num_classes=num_classes)
 
     elif model_type == 'efficientnet_b2_pruned':
