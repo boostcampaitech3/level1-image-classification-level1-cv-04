@@ -18,3 +18,14 @@ conda create -n 가상환경 이름 python=3.8
 ```
 pip install torch==1.10.0+cu102 torchvision==0.11.1+cu102
 ```
+
+
+## 학습 실행 예시
+```
+python main.py --model "efficientnet_b3" --resize 224 224 ; python main.py --model "resnet18" --resize 256 256
+```
+
+## 추론 예시(Single model)
+```
+python main.py --inference True --save_path "저장된 모델 경로" --model "efficientnet_b3" --resize 224 224
+```
