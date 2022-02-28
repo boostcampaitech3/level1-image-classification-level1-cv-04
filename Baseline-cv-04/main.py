@@ -108,6 +108,42 @@ def main(args, logger, wandb):
     # predict & submit
     inference(args, model, test_loader, info)
 
+    # save logits
+    if args["SAVE_LOGITS"]:
+        print(f"SAVE_LOGITS set to {args['SAVE_LOGITS']}. Saving logits csv file...")
+        # Load Dataframe
+        data = pd.read_csv(current_dir + "/data/final_train_df.csv")
+        
+        # Age label revision
+        data = age_bound(args, data)
+
+        # Class Weight
+        class_dist = data["all"].value_counts().sort_index().values
+        class_weights = [int(class_dist.sum()/num) for num in class_dist]
+        class_weights = torch.tensor(class_weights,dtype=torch.float)
+        
+        # K-fold
+        kfold = KFold(n_splits=5, shuffle=True, random_state=random_seed)
+        unique_path =  data['path'].unique() 
+
+        for fold_num, (train_index, valid_index) in enumerate(kfold.split(unique_path), start=1):
+            train_path = unique_path[train_index]
+            valid_path = unique_path[valid_index]
+
+            X_train = data[data["path"].isin(train_path)].reset_index(drop=True)
+            X_valid = data[data["path"].isin(valid_path)].reset_index(drop=True)
+
+            # Generate train data loader
+            train_dataset = MaskDataset(X_train, get_valid_transform(args))
+            train_loader = DataLoader(train_dataset, batch_size=args["BATCH_SIZE"], shuffle=False, num_workers=2)
+
+            valid_dataset = MaskDataset(X_valid, get_valid_transform(args))
+            valid_loader = DataLoader(valid_dataset, batch_size=args["BATCH_SIZE"], shuffle=False, num_workers=2)
+
+            break
+        
+        infer_logits(args, model, train_loader, X_train, valid_loader, X_valid, test_loader, info)
+
 if __name__ == "__main__":
 
     args = Args().params

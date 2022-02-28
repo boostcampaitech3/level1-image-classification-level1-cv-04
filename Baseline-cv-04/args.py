@@ -17,6 +17,7 @@ class Args(object):
     parser.add_argument('--scheduler_patience', type=int, default=2)
     parser.add_argument('--age_bound', type=int, default=59)
     parser.add_argument('--save_path', default=False, help='Trained model path')
+    parser.add_argument('--save_logits', default=True, help='Save model logits along answer file')
     parser.add_argument('--num_classes', type=int, default=18)
     parser.add_argument('--oversampling', type=bool, default=False)
     parser.add_argument('--kfold', type=bool, default=False)
@@ -39,6 +40,7 @@ class Args(object):
         "SCHEDULER_PATIENCE": parse.scheduler_patience,
         "AGE_BOUND": parse.age_bound,
         "SAVE_PATH": parse.save_path, 
+        "SAVE_LOGITS": parse.save_logits,
         "NUM_CLASSES": parse.num_classes,
         "OVERSAMPLING": parse.oversampling,
         "KFOLD": parse.kfold,
