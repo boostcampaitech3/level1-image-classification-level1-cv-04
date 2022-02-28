@@ -65,11 +65,64 @@ class F1Loss(nn.Module):
         return 1 - f1.mean()
 
 
+# https://www.kaggle.com/c/cassava-leaf-disease-classification/discussion/208239
+class SymmetricCrossEntropyLoss(nn.Module):
+    
+    def __init__(self, alpha=0.1, beta=1.0, num_classes= 18):
+        super(SymmetricCrossEntropyLoss, self).__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.num_classes = num_classes
+
+    def forward(self, logits, targets, reduction='mean'):
+        onehot_targets = torch.eye(self.num_classes)[targets].cuda()
+        ce_loss = F.cross_entropy(logits, targets, reduction=reduction)
+        rce_loss = (-onehot_targets*logits.softmax(1).clamp(1e-7, 1.0).log()).sum(1)
+        if reduction == 'mean':
+            rce_loss = rce_loss.mean()
+        elif reduction == 'sum':
+            rce_loss = rce_loss.sum()
+        return self.alpha * ce_loss + self.beta * rce_loss
+
+
+class CrossEntropyF1Loss(nn.Module):
+    def __init__(self, classes=18, epsilon=1e-7):
+        super().__init__()
+        self.classes = classes
+        self.epsilon = epsilon
+
+    def forward(self, y_pred, y_true):
+        assert y_pred.ndim == 2
+        assert y_true.ndim == 1
+
+        ce_loss = nn.functional.cross_entropy(y_pred, y_true)
+
+        y_true = F.one_hot(y_true, self.classes).to(torch.float32)
+        y_pred = F.softmax(y_pred, dim=1)
+
+        tp = (y_true * y_pred).sum(dim=0).to(torch.float32)
+        tn = ((1 - y_true) * (1 - y_pred)).sum(dim=0).to(torch.float32)
+        fp = ((1 - y_true) * y_pred).sum(dim=0).to(torch.float32)
+        fn = (y_true * (1 - y_pred)).sum(dim=0).to(torch.float32)
+
+        precision = tp / (tp + fp + self.epsilon)
+        recall = tp / (tp + fn + self.epsilon)
+
+        f1 = 2 * (precision * recall) / (precision + recall + self.epsilon)
+        f1 = f1.clamp(min=self.epsilon, max=1 - self.epsilon)
+
+        f1_loss = 1 - f1.mean()
+
+        return 0.5*f1_loss + 0.5*ce_loss
+
+
 _criterion_entrypoints = {
     'cross_entropy': nn.CrossEntropyLoss,
     'focal': FocalLoss,
     'label_smoothing': LabelSmoothingLoss,
-    'f1': F1Loss
+    'f1': F1Loss,
+    'symmetric_cross_entropy': SymmetricCrossEntropyLoss,
+    'cross_entropy_f1': CrossEntropyF1Loss 
 }
 
 
