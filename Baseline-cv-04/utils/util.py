@@ -10,36 +10,36 @@ from albumentations.pytorch import ToTensorV2
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import wandb
 
-def get_train_transform(args):
-    return A.Compose([
-                    A.CenterCrop(height=int(512*0.9), width=int(384*0.9), p=1),
-                    A.ShiftScaleRotate(scale_limit=0, shift_limit=0.02, rotate_limit=0, p=0.5),
-                    A.HorizontalFlip(p=0.5),
-                    A.Resize(width=args["RESIZE"][0], height=args["RESIZE"][1]),
-                    A.Normalize(
-                        mean=[0.56, 0.524, 0.501],
-                        std=[0.258, 0.265, 0.267],
-                        max_pixel_value=255.0),
-                    ToTensorV2()
-                    ])
+# def get_train_transform(args):
+#     return A.Compose([
+#                     A.CenterCrop(height=int(512*0.9), width=int(384*0.9), p=1),
+#                     A.ShiftScaleRotate(scale_limit=0, shift_limit=0.02, rotate_limit=0, p=0.5),
+#                     A.HorizontalFlip(p=0.5),
+#                     A.Resize(width=args["RESIZE"][0], height=args["RESIZE"][1]),
+#                     A.Normalize(
+#                         mean=[0.56, 0.524, 0.501],
+#                         std=[0.258, 0.265, 0.267],
+#                         max_pixel_value=255.0),
+#                     ToTensorV2()
+#                     ])
 
-def get_valid_transform(args):
-    return A.Compose([
-                    A.CenterCrop(height=int(512*0.9), width=int(384*0.9), p=1),
-                    A.Resize(width=args["RESIZE"][0], height=args["RESIZE"][1]),
-                    A.Normalize(
-                        mean=[0.56, 0.524, 0.501],
-                        std=[0.258, 0.265, 0.267],
-                        max_pixel_value=255.0),
-                    ToTensorV2()
-                    ])
+# def get_valid_transform(args):
+#     return A.Compose([
+#                     A.CenterCrop(height=int(512*0.9), width=int(384*0.9), p=1),
+#                     A.Resize(width=args["RESIZE"][0], height=args["RESIZE"][1]),
+#                     A.Normalize(
+#                         mean=[0.56, 0.524, 0.501],
+#                         std=[0.258, 0.265, 0.267],
+#                         max_pixel_value=255.0),
+#                     ToTensorV2()
+#                     ])
 
-def pre_transform(args):
-    return A.Compose([
-                    A.CenterCrop(height=470, width=340, p=1),
-                    A.ShiftScaleRotate(scale_limit=0, shift_limit=0.02, rotate_limit=0, p=0.5),
-                    A.Resize(width=args["RESIZE"][0], height=args["RESIZE"][1]),
-                    ]) 
+# def pre_transform(args):
+#     return A.Compose([
+#                     A.CenterCrop(height=470, width=340, p=1),
+#                     A.ShiftScaleRotate(scale_limit=0, shift_limit=0.02, rotate_limit=0, p=0.5),
+#                     A.Resize(width=args["RESIZE"][0], height=args["RESIZE"][1]),
+#                     ]) 
     
 
 def train_test_split_by_folder(data, test_size):

@@ -6,6 +6,7 @@ from pathlib import Path
 from tqdm import tqdm 
 from importlib import import_module
 from utils.loss import create_criterion
+from utils.augmentation import cutmix
 from trainer.validation import validation
 from sklearn.metrics import f1_score
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -44,15 +45,48 @@ def train(args, model, train_loader, valid_loader, fold_num, time_stamp, class_w
 
         for i, (X, y) in enumerate(tqdm(train_loader, total=len(train_loader))):
            
-            X = X.to(device)
+            this_epoch_cutmix = np.random.random() > 0.5
+            this_epoch_mixup = np.random.random() > 0.5
+
+            if args["FACECENTER"]:
+                X_ = X["image"].to(device)
+                r = X["ratio"].to(device)
+            else:
+                X_ = X.to(device)
+                r = torch.ones(y.shape[-1]).to(device) / 2 # 0.5
             y = y.to(device)
 
-            outputs = model(X)
-            preds = torch.argmax(outputs, dim=-1)
-            num_correct += (preds==y).sum()
+            if args["CUTMIX"] and this_epoch_cutmix:
+                X_, ratio_l, ratio_r, y_l, y_r = cutmix(X_, r, y)
+                ratio_all = ratio_l + ratio_r
+                y_same = ((y_l==y_r).type(torch.float) - 1) * -1 # if y_l==y_r -> 0 else 1
+            elif args["MIXUP"] and this_epoch_mixup:
+                pass
+
+            outputs = model(X_)
+            if args["CUTMIX"] and this_epoch_cutmix:
+                _, preds = torch.topk(outputs, 2)
+                p_1 = preds[:, 0] # first top value
+                p_2 = preds[:, 1] / y_same # second top value, if y_l==y_r -> inf else same
+                n = (p_1==y_l).sum() + (p_1==y_r).sum() + (p_2==y_l).sum() + (p_2==y_r).sum()
+                num_correct += torch.div(n, 2)
+            elif args["MIXUP"] and this_epoch_mixup:
+                pass
+            else:
+                preds = torch.argmax(outputs, dim=-1)
+                num_correct += (preds==y).sum()
             num_samples += preds.shape[0]
             
-            loss = criterion(outputs, y)
+            if args["CUTMIX"] and this_epoch_cutmix:
+                loss_l = criterion(outputs, y_l)
+                loss_r = criterion(outputs, y_r)
+                ratio_l = torch.sum(ratio_l / ratio_all) / ratio_all.shape[0]
+                ratio_r = torch.sum(ratio_r / ratio_all) / ratio_all.shape[0]
+                loss = ratio_l * loss_l + ratio_r * loss_r
+            elif args["MIXUP"] and this_epoch_mixup:
+                pass
+            else:
+                loss = criterion(outputs, y)
             total_loss.append(loss.item())
             
             optimizer.zero_grad()

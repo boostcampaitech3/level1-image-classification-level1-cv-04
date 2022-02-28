@@ -1,3 +1,4 @@
+import os
 import time
 import torch
 import random
@@ -6,13 +7,15 @@ import pandas as pd
 from args import Args
 from glob import glob
 from tqdm import tqdm
-from utils.util import *
+from utils.util import age_bound, get_log, wandb_init, print_metrics
+from utils.augmentation import get_train_transform, get_train_face_center_crop_transform, get_valid_transform
 from inference import inference, infer_logits
 from model_utils.model import load_model
 from torch.utils.data import DataLoader, WeightedRandomSampler
-from utils.dataset import MaskDataset, MaskTestDataset
+from utils.dataset import MaskDataset, MaskFaceCenterDataset, MaskTestDataset
 from trainer.train import train
 from sklearn.model_selection import KFold
+import wandb
 
 
 def main(args, logger, wandb):
@@ -54,7 +57,11 @@ def main(args, logger, wandb):
             X_valid = data[data["path"].isin(valid_path)].reset_index(drop=True)
 
             # Generate train data loader
-            train_dataset = MaskDataset(X_train, get_train_transform(args))
+            if args["FACECENTER"]:
+                # outputs face area ratios along images
+                train_dataset = MaskFaceCenterDataset(X_train, get_train_face_center_crop_transform(args))
+            else:
+                train_dataset = MaskDataset(X_train, get_train_transform(args))
         
             # Oversampling
             if args["OVERSAMPLING"]:

@@ -4,6 +4,9 @@ import argparse
 class Args(object):
     parser = argparse.ArgumentParser(description='Arguments for Mask Classification train/test')
     parser.add_argument('--model', default='efficientnet_b3') ### 
+    parser.add_argument('--face_center', default=False, help='Use FaceCenterRandomRatioCrop instead of CenterCrop')
+    parser.add_argument('--cutmix', default=False, help='Use CutMix (vertical half version)')
+    parser.add_argument('--mixup', default=False, help='Use MixUp')
     parser.add_argument('--criterion', default='focal', help='[\'cross_entropy\', \'focal\', \'label_smoothing\', \'f1\']')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)') 
     parser.add_argument('--resize', type=int, nargs="+", default=(312, 312), help='Resize input image')
@@ -27,6 +30,9 @@ class Args(object):
     parse = parser.parse_args()
     params = {
         "MODEL": parse.model, 
+        "FACECENTER": parse.face_center, 
+        "CUTMIX": parse.cutmix, 
+        "MIXUP": parse.mixup, 
         "CRITERION": parse.criterion, 
         "OPTIMIZER": parse.optimizer,
         "RESIZE": parse.resize, 
