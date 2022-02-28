@@ -4,7 +4,7 @@
 
 ### Unnecessary Files
 .Baseline-cv-04/checkpoint/*/*
-.Baseline-cv-04/wandb/*/*
+.Baseline-cv-04/wandb/*
 .Baseline-cv-04/fig/*
 
 ### JupyterNotebooks ###
