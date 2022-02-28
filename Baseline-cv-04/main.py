@@ -7,7 +7,7 @@ from args import Args
 from glob import glob
 from tqdm import tqdm
 from utils.util import *
-from inference import inference
+from inference import inference, infer_logits
 from model_utils.model import load_model
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from utils.dataset import MaskDataset, MaskTestDataset
