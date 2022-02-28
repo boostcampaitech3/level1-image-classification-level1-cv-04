@@ -82,6 +82,7 @@ def train(args, model, train_loader, valid_loader, fold_num, time_stamp, class_w
         # Save Model
         if best_f1 < f1:
             logger.info("Val F1 improved from {:.3f} -> {:.3f}".format(best_f1, f1))
+            wandb.run.summary["Best F1"] = f1
             best_f1 = f1
             best_acc = val_accuarcy
             best_val_preds = val_preds

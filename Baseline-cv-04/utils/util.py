@@ -92,7 +92,7 @@ def get_log(args):
 
 def wandb_init(args, wandb, time_stamp):
     
-    wandb.init(project="pstage-classification", entity="sseunghyun", name = f"{time_stamp}_{args['MODEL']}-{args['CRITERION']}-{args['OPTIMIZER']}-age_bound_{args['AGE_BOUND']}-oversample_{args['OVERSAMPLING']}-classweights_{args['CLASS_WEIGHTS']}")
+    wandb.init(project="test-project", entity="ai3_cv4", name = f"{args['MODEL']}_MYINITIAL")
 
     wandb.config.update({
     "Model": args["MODEL"],
