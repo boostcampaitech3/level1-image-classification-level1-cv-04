@@ -114,6 +114,22 @@ class CrossEntropyF1Loss(nn.Module):
         f1_loss = 1 - f1.mean()
 
         return 0.5*f1_loss + 0.5*ce_loss
+   
+class CrossEntropyLossWithLabelSmoothing(nn.Module):
+    def __init__(self, n_dim, ls_=0.9):
+        super().__init__()
+        self.n_dim = n_dim
+        self.ls_ = ls_
+
+    def forward(self, x, target):
+        target = F.one_hot(target, self.n_dim).float()
+        target *= self.ls_
+        target += (1 - self.ls_) / self.n_dim
+
+        logprobs = torch.nn.functional.log_softmax(x, dim=-1)
+        loss = -logprobs * target
+        loss = loss.sum(-1)
+        return loss.mean()
 
 
 _criterion_entrypoints = {
@@ -122,7 +138,8 @@ _criterion_entrypoints = {
     'label_smoothing': LabelSmoothingLoss,
     'f1': F1Loss,
     'symmetric_cross_entropy': SymmetricCrossEntropyLoss,
-    'cross_entropy_f1': CrossEntropyF1Loss 
+    'cross_entropy_f1': CrossEntropyF1Loss,
+    'cross_entropy_label_smoothing' : CrossEntropyLossWithLabelSmoothing
 }
 
 
