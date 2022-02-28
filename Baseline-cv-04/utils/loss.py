@@ -116,7 +116,7 @@ class CrossEntropyF1Loss(nn.Module):
         return 0.5*f1_loss + 0.5*ce_loss
    
 class CrossEntropyLossWithLabelSmoothing(nn.Module):
-    def __init__(self, n_dim, ls_=0.9):
+    def __init__(self, n_dim=18, ls_=0.9):
         super().__init__()
         self.n_dim = n_dim
         self.ls_ = ls_
