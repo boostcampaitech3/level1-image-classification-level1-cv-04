@@ -2,6 +2,7 @@
 
 
 - `utils/util.py` 에서 `wandb_init` 함수의 `wandb.init` 부분
+    - 이니셜 수정
 - `data/final_train_df.csv` 에서 `img_path` 칼럼 부분을 자신의 환경에 맞게 경로 설정(혹은 `utils/dataset.py`의 데이터로더 부분에서 처리)
 
 
