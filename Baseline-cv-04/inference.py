@@ -17,4 +17,5 @@ def inference(args, model, test_loader, info):
 
     info["ans"] = preds
     info.to_csv(f"submission/{args['MODEL']}/sub.csv", index=False)
+    print(info["ans"].value_counts().sort_index())
     print(f'Inference Done!')

@@ -23,10 +23,12 @@ def main(args, logger, wandb):
     time_stamp = "_".join(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()).split(" "))
     current_dir = os.path.dirname(os.path.realpath(__file__))
 
-    # init
-    wandb_init(args, wandb, time_stamp)
+
 
     if not test_mode:
+        # init
+        wandb_init(args, wandb, time_stamp)
+
         # Load Dataframe
         data = pd.read_csv(current_dir + "/data/final_train_df.csv")
         

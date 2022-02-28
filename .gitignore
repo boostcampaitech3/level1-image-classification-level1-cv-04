@@ -2,8 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,jupyternotebooks,python,pycharm,windows,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,jupyternotebooks,python,pycharm,windows,macos
 
-### Large Files
+### Unnecessary Files
 .Baseline-cv-04/checkpoint/*/*
+.Baseline-cv-04/wandb
 
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks
