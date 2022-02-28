@@ -14,9 +14,15 @@
 conda create -n 가상환경 이름 python=3.8
 ```
 
-- torch install 
+- torch install
 ```
-pip install torch==1.10.0+cu102 torchvision==0.11.1+cu102
+# conda
+conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch
+```
+
+```
+# pip
+pip3 install torch torchvision torchaudio
 ```
 
 
