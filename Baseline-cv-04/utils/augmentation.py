@@ -24,7 +24,7 @@ class FaceCenterRandomRatioCrop:
         cen_x, cen_y = round(x + w/2), round(y + h/2)
 
         face_area = h * w
-        img_area = (1-ratio) * face_area / ratio
+        img_area = face_area / ratio
         img_wh = round(img_area ** 0.5) # img width를 img height와 동일하게 설정합니다.
         img_wh = img_wh + 1 if img_wh % 2 == 1 else img_wh # 짝수로 맞춰줍니다.
 
@@ -63,7 +63,7 @@ class MinMaxScaleByDivision:
     def __init__(self, div_num=255.):
         self.div_num = div_num
     
-    def __call___(self, sample):
+    def __call__(self, sample):
         return sample / self.div_num
 
 
@@ -104,6 +104,7 @@ def get_train_face_center_crop_transform(args):
                     # A.ShiftScaleRotate(scale_limit=0, shift_limit=0.02, rotate_limit=0, p=0.5),
                     A.HorizontalFlip(p=0.5),
                     A.Resize(width=args["RESIZE"][0], height=args["RESIZE"][1]),
+                    A.CLAHE(),
                     A.Normalize(
                         mean=[0.56, 0.524, 0.501],
                         std=[0.258, 0.265, 0.267],
