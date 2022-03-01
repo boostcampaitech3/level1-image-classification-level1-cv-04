@@ -24,6 +24,9 @@ class Args(object):
     parser.add_argument('--num_classes', type=int, default=18)
     parser.add_argument('--oversampling', type=bool, default=False)
     parser.add_argument('--kfold', type=bool, default=False)
+    parser.add_argument('--multi', type=int, nargs="+", default=[], help='Number of mask, gender, age labels')
+    parser.add_argument('--multi_weight', type=float, nargs="+", default=[0.25, 0.5, 1.], help='Weight of mask, gender, age labels')
+    parser.add_argument('--multi_criterion', type=str, default=['cross_entropy', 'cross_entropy', 'focal'], help='Criterion for mask, gender, age labels')
     parser.add_argument('--class_weights', type=bool, default=False)
 
 
@@ -50,5 +53,8 @@ class Args(object):
         "NUM_CLASSES": parse.num_classes,
         "OVERSAMPLING": parse.oversampling,
         "KFOLD": parse.kfold,
+        "MULTI": parse.multi,
+        "MULTIWEIGHT": parse.multi_weight,
+        "MULTICRITERION": parse.multi_criterion,
         "CLASS_WEIGHTS": parse.class_weights
     }

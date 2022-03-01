@@ -7,7 +7,7 @@ import pandas as pd
 from args import Args
 from glob import glob
 from tqdm import tqdm
-from utils.util import age_bound, get_log, wandb_init, print_metrics
+from utils.util import age_bound, age_bound_6, get_log, wandb_init, print_metrics
 from utils.augmentation import get_train_transform, get_train_face_center_crop_transform, get_valid_transform
 from inference import inference, infer_logits
 from model_utils.model import load_model
@@ -36,7 +36,10 @@ def main(args, logger, wandb):
         data = pd.read_csv(current_dir + "/data/final_train_df.csv")
         
         # Age label revision
-        data = age_bound(args, data)
+        if args["MULTI"] and args["MULTI"][-1] == 6:
+            data = age_bound_6(args, data)
+        else:
+            data = age_bound(args, data)
 
         # Class Weight
         class_dist = data["all"].value_counts().sort_index().values
@@ -59,9 +62,9 @@ def main(args, logger, wandb):
             # Generate train data loader
             if args["FACECENTER"]:
                 # outputs face area ratios along images
-                train_dataset = MaskFaceCenterDataset(X_train, get_train_face_center_crop_transform(args))
+                train_dataset = MaskFaceCenterDataset(X_train, get_train_face_center_crop_transform(args), multi_output=len(args["MULTI"])!=0)
             else:
-                train_dataset = MaskDataset(X_train, get_train_transform(args))
+                train_dataset = MaskDataset(X_train, get_train_transform(args), multi_output=len(args["MULTI"])!=0)
         
             # Oversampling
             if args["OVERSAMPLING"]:
@@ -76,7 +79,7 @@ def main(args, logger, wandb):
             else:
                 train_loader = DataLoader(train_dataset, batch_size=args["BATCH_SIZE"], shuffle=True, num_workers=2)
 
-            valid_dataset = MaskDataset(X_valid, get_valid_transform(args))
+            valid_dataset = MaskDataset(X_valid, get_valid_transform(args), multi_output=len(args["MULTI"])!=0)
             valid_loader = DataLoader(valid_dataset, batch_size=args["BATCH_SIZE"], shuffle=False, num_workers=2)
         
             # Load model
@@ -85,7 +88,10 @@ def main(args, logger, wandb):
 
             # Train model
             logger.info("============== (" + str(fold_num) + "-th cross validation start) =================\n")
-            best_val_preds, val_labels, best_f1, best_acc = train(args, model, train_loader, valid_loader, fold_num, time_stamp, class_weights, logger, wandb)
+            if args["MULTI"]:
+                best_val_preds, val_labels, best_f1, best_acc = train_multi(args, model, train_loader, valid_loader, fold_num, time_stamp, class_weights, logger, wandb)
+            else:
+                best_val_preds, val_labels, best_f1, best_acc = train(args, model, train_loader, valid_loader, fold_num, time_stamp, class_weights, logger, wandb)
             
             # Visualize Confusion metrics
             print_metrics(best_val_preds, val_labels,  "{}/fold{}_{}_F1_{:.4f}_Acc_{:.4f}".format(time_stamp, fold_num, args['MODEL'], best_f1, best_acc))

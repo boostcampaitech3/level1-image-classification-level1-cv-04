@@ -60,9 +60,28 @@ def age_group(x, upper_bound):
     else:
         return 2
 
+def age_group_6(x, upper_bound):
+    if x < 20:
+        return 0
+    elif x < 30:
+        return 1
+    elif x < 40:
+        return 2
+    elif x < 50:
+        return 3
+    elif x < upper_bound:
+        return 4
+    else:
+        return 5
+
 def age_bound(args, dataframe):
     dataframe["age_group"] = dataframe['age_indv'].apply(lambda x : age_group(x, args["AGE_BOUND"]))
-    dataframe['all'] = dataframe['mask'] * 6 + dataframe['gender']*3 + dataframe['age_group']
+    dataframe['all'] = dataframe['mask'] * 6 + dataframe['gender'] * 3 + dataframe['age_group']
+    return dataframe
+
+def age_bound_6(args, dataframe):
+    dataframe["age_group"] = dataframe['age_indv'].apply(lambda x : age_group_6(x, args["AGE_BOUND"]))
+    dataframe['all'] = dataframe['mask'] * 6 + dataframe['gender'] * 3 + (dataframe['age_group']+1) // 3
     return dataframe
 
 def load_checkpoint(checkpoint, model, optimizer, lr=None):
