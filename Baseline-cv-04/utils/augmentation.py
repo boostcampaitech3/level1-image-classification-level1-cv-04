@@ -86,6 +86,7 @@ def get_train_transform(args):
                     A.ShiftScaleRotate(scale_limit=0, shift_limit=0.02, rotate_limit=0, p=0.5),
                     A.HorizontalFlip(p=0.5),
                     A.Resize(width=args["RESIZE"][0], height=args["RESIZE"][1]),
+                    A.CLAHE(),
                     A.Normalize(
                         mean=[0.56, 0.524, 0.501],
                         std=[0.258, 0.265, 0.267],
