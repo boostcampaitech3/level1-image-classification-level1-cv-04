@@ -41,7 +41,7 @@ def train(args, model, train_loader, valid_loader, fold_num, time_stamp, class_w
 
     for epoch in tqdm(range(1, num_epochs+1), total=num_epochs):
         total_loss = []
-        num_correct, num_samples = 0, 0
+        num_correct, num_samples = 0., 0
 
         for i, (X, y) in enumerate(tqdm(train_loader, total=len(train_loader))):
            
