@@ -28,6 +28,7 @@ class Args(object):
     parser.add_argument('--multi_weight', type=float, nargs="+", default=[0.25, 0.5, 1.], help='Weight of mask, gender, age labels')
     parser.add_argument('--multi_criterion', type=str, default=['cross_entropy', 'cross_entropy', 'focal'], help='Criterion for mask, gender, age labels')
     parser.add_argument('--class_weights', type=bool, default=False)
+    parser.add_argument('--tta', type=bool, default=False, help='Test Time Augmentation (Inference)')
 
 
     parse = parser.parse_args()
@@ -56,5 +57,6 @@ class Args(object):
         "MULTI": parse.multi,
         "MULTIWEIGHT": parse.multi_weight,
         "MULTICRITERION": parse.multi_criterion,
-        "CLASS_WEIGHTS": parse.class_weights
+        "CLASS_WEIGHTS": parse.class_weights,
+        "TTA": parse.tta
     }

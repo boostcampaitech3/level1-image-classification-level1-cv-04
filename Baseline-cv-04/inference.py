@@ -1,16 +1,25 @@
 import os
 import torch
+from torchvision import transforms
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from utils.dataset import MaskTestDataset
 
 def inference(args, model, test_loader, info):
+    loop_num = 2 if args["TTA"] else 1 
+
     preds = []
     with torch.no_grad():
         for idx, (images, id_) in enumerate(tqdm(test_loader, total=len(test_loader))):
-            images = images.to("cuda")
-            pred = model(images)
+            for loop_id in range(loop_num):
+                images = transforms.RandomHorizontalFlip(p=loop_id)(images)
+                images = images.to("cuda")
+                if loop_id == 0:
+                    pred = model(images)
+                else:
+                    pred += model(images)
+                    pred /= 2
             pred = pred.argmax(dim=-1)
             preds.extend(pred.cpu().numpy())
 
@@ -26,10 +35,18 @@ def infer_logits(args, model, train_loader, train_data, valid_loader, valid_data
     if not os.path.exists("submission/" + args["MODEL"]):
         os.makedirs("submission/" + args["MODEL"])
 
+    loop_num = 2 if args["TTA"] else 1 
+
     with torch.no_grad():
         for idx, (images, id_) in enumerate(tqdm(train_loader, total=len(train_loader))):
-            images = images.to("cuda")
-            logit = model(images)
+            for loop_id in range(loop_num):
+                images = transforms.RandomHorizontalFlip(p=loop_id)(images)
+                images = images.to("cuda")
+                if loop_id == 0:
+                    logit = model(images)
+                else:
+                    logit += model(images)
+                    logit /= 2
             if idx == 0:
                 logits = logit.cpu().numpy()
             else:
@@ -44,8 +61,14 @@ def infer_logits(args, model, train_loader, train_data, valid_loader, valid_data
     logits = np.array([])
     with torch.no_grad():
         for idx, (images, id_) in enumerate(tqdm(valid_loader, total=len(valid_loader))):
-            images = images.to("cuda")
-            logit = model(images)
+            for loop_id in range(loop_num):
+                images = transforms.RandomHorizontalFlip(p=loop_id)(images)
+                images = images.to("cuda")
+                if loop_id == 0:
+                    logit = model(images)
+                else:
+                    logit += model(images)
+                    logit /= 2
             if idx == 0:
                 logits = logit.cpu().numpy()
             else:
@@ -60,8 +83,14 @@ def infer_logits(args, model, train_loader, train_data, valid_loader, valid_data
     logits = np.array([])
     with torch.no_grad():
         for idx, (images, id_) in enumerate(tqdm(test_loader, total=len(test_loader))):
-            images = images.to("cuda")
-            logit = model(images)
+            for loop_id in range(loop_num):
+                images = transforms.RandomHorizontalFlip(p=loop_id)(images)
+                images = images.to("cuda")
+                if loop_id == 0:
+                    logit = model(images)
+                else:
+                    logit += model(images)
+                    logit /= 2
             if idx == 0:
                 logits = logit.cpu().numpy()
             else:
