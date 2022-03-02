@@ -23,8 +23,19 @@ def load_model(args):
 
 
 def change_last_child_module_to_multihead(model, args):
-    last_child_name, last_child_module = list(model.named_children())[-1]
+    children = list(model.named_children())[::-1]
+    last_child_name, last_child_module = children[0]
     
+    # 마지막 child_module에 인접한 Conv / Pool / Linear 레이어 검색
+    found = False
+    for _, child_module in children[1:]:
+        for m in list(child_module.modules())[::-1]:
+            module_type = str(type(m))
+            if "Conv2d" in module_type or "Pool2d" in module_type or "Linear" in module_type:
+                found = True; break
+        if found: break
+    use_globalpool = "Conv2d" in module_type # 인접한 child_module이 Conv이면 global average pool 수행
+
     for m in last_child_module.modules():
         if hasattr(m, "in_features"):
             num_inputs = m.in_features
@@ -33,7 +44,7 @@ def change_last_child_module_to_multihead(model, args):
             num_inputs = m.in_channels
             break
         
-    exec(f"model.{last_child_name} = TripleHeadClassifier({num_inputs}, {args['MULTI']})")
+    exec(f"model.{last_child_name} = TripleHeadClassifier({num_inputs}, {args['MULTI']}, use_globalpool={use_globalpool})")
 
     return model
 

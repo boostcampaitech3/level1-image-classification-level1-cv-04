@@ -32,11 +32,16 @@ class SE(nn.Module):
 
 
 class TripleHeadClassifier(nn.Module):
-    def __init__(self, num_features, nums_multihead):
+    def __init__(self, num_features, nums_multihead, use_globalpool=False):
         assert len(nums_multihead) == 3, f"MultiHead의 길이가 {len(nums_multihead)}입니다."
         super(TripleHeadClassifier, self).__init__()
         n_m, n_g, n_a = nums_multihead
+
+        self.use_globalpool = use_globalpool
+        if self.use_globalpool:
+            self.globalavgpool = nn.AdaptiveAvgPool2d(1)
         self.flatten = nn.Flatten()
+
         # self.mask_classifier = timm.models.layers.ClassifierHead(num_features, n_m)
         self.mask_classifier = nn.Linear(num_features, n_m)
         # self.gender_classifier = timm.models.layers.ClassifierHead(num_features, n_g)
@@ -45,9 +50,12 @@ class TripleHeadClassifier(nn.Module):
         self.age_classifier = nn.Linear(num_features, n_a)
 
     def forward(self, x):
+        if self.use_globalpool:
+            x = self.globalavgpool(x)
         x = self.flatten(x)
         mask = self.mask_classifier(x)
         gender = self.gender_classifier(x)
         age = self.age_classifier(x)
 
         return mask, gender, age
+    
