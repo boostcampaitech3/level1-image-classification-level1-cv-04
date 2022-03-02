@@ -126,7 +126,6 @@ def train(args, model, train_loader, valid_loader, fold_num, time_stamp, class_w
                 "optimizer": optimizer.state_dict()
                 }    
             
-            torch.save(checkpoint, "/Fold{}_{}_Epoch{}_{:.3f}_{}.tar".format(fold_num, args['MODEL'], epoch, best_f1, args["CRITERION"]))
             # 기존 경로 제거
             try:
                 os.remove(save_path)
