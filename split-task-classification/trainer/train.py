@@ -46,21 +46,13 @@ def train(args, model, train_loader, valid_loader, fold_num, time_stamp, class_w
         for i, (X, y) in enumerate(tqdm(train_loader, total=len(train_loader))):
             X = X.to(device)
             y = y.to(device)
-            if  np.random.random() > 0.5:   
-                lam = np.random.beta(1.0, 1.0)
-                rand_index = torch.randperm(X.size()[0]).to(args["DEVICE"])
-                target_a = y
-                target_b = y[rand_index]            
-                bbx1, bby1, bbx2, bby2 = rand_bbox(X.size(), lam)
-                X[:, :, bbx1:bbx2, bby1:bby2] = X[rand_index, :, bbx1:bbx2, bby1:bby2]
-                lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (X.size()[-1] * X.size()[-2]))
-
-                outputs = model(X)
-                loss = criterion(outputs, target_a) * lam + criterion(outputs, target_b) * (1. - lam)
             
-            else:
-                outputs = model(X)
-                loss = criterion(outputs, y)
+            outputs = model(X)
+            loss = criterion(outputs, y)
+            
+            preds = torch.argmax(outputs, dim=-1)
+            num_correct += (preds==y).sum()
+            num_samples += preds.shape[0]
 
             loss = criterion(outputs, y)
             total_loss.append(loss.item())
