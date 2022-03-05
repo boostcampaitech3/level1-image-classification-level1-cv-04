@@ -11,4 +11,4 @@ __Level 1 CV 4조 <커피사조>__
 * Public F1 82.4603 → Private F1 81.4127
 * Public F1 3위 → Private F1 7위
 
-![private_leaderboard](https://user-images.githubusercontent.com/38153357/156706013-9c60dd67-dae5-4497-afd7-9970c2402b0c.gif)
+![private_leaderboard]<img width="537" alt="image" src="https://user-images.githubusercontent.com/90603530/156859341-1e3dfae1-5d7e-4b10-8878-55bd88256893.png">
