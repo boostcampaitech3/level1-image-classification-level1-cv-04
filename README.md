@@ -92,4 +92,5 @@ level1-cv-04/
    
    
 ## Wrap Up Report 📑
-[Wrap up.pdf](https://github.com/boostcampaitech3/level1-image-classification-level1-cv-04/files/8190306/Wrap.up.pdf)
+[[CV-04] Wrap Up Report.pdf](https://github.com/boostcampaitech3/level1-image-classification-level1-cv-04/files/8190326/CV-04.Wrap.Up.Report.pdf)
+
