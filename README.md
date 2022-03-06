@@ -13,7 +13,7 @@
 * Public F1 82.4603 → Private F1 81.4127
 * Public F1 3위 → Private F1 7위
 
-<img width="800" alt="image" src="https://user-images.githubusercontent.com/90603530/156859341-1e3dfae1-5d7e-4b10-8878-55bd88256893.png">   
+<img width="800" alt="image" src="https://user-images.githubusercontent.com/38153357/156905371-3249073f-e5c5-464f-a3dd-f8688baa54e6.gif">   
 
 ## Time Line 🗓️
 <img width = "800" alt="image" src="https://user-images.githubusercontent.com/90603530/156876039-ed4bf244-90e6-490a-b9fc-f65a92ad027d.png">
