@@ -49,20 +49,24 @@ COVID-19의 확산으로 우리나라는 물론 전 세계 사람들은 경제�
 ### 새로운 데이터셋 구성
 
 ```
-images/
+data/
 ├── 📂 train/
-│   └── 📂 {id}_{gender}_{race}_{age}
-│       ├── 😀 incorrect_mask.jpg
-│       ├── 😀 mask1.jpg
-│       ├── 😀 mask2.jpg
-│       ├── 😀 mask3.jpg
-│       ├── 😀 mask4.jpg
-│       ├── 😀 mask5.jpg
-│       └── 😀 normal.jpg
+│   ├── 📄 train.csv
+│   └── 📂 images/
+│       └── 📂 {id}_{gender}_{race}_{age}
+│           ├── 😀 incorrect_mask.jpg
+│           ├── 😀 mask1.jpg
+│           ├── 😀 mask2.jpg
+│           ├── 😀 mask3.jpg
+│           ├── 😀 mask4.jpg
+│           ├── 😀 mask5.jpg
+│           └── 😀 normal.jpg
 └── 📂 eval/
-    ├── 😉 {id}_{gender}_{race}_{age}_{mask_type}.jpg
-    ├── 😉 {id}_{gender}_{race}_{age}_{mask_type}.jpg
-    └── 😉 {id}_{gender}_{race}_{age}_{mask_type}.jpg
+    ├── 📄 info.csv
+    └── 📂 images/
+        ├── 😉 {id}_{gender}_{race}_{age}_{mask_type}.jpg
+        ├── 😉 {id}_{gender}_{race}_{age}_{mask_type}.jpg
+        └── 😉 {id}_{gender}_{race}_{age}_{mask_type}.jpg
 ```
 
 * 전체 사람 명 수 : 15,300명 (train : 2,700명 / eval : 12,600명)
